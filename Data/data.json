@@ -1,0 +1,29 @@
+[
+  {
+    "barcode": "299010028768",
+    "name": "Olma",
+    "price": 15000,
+    "count": 10
+    },
+    {"barcode": "299010028769",
+    "name": "Anor",
+    "price": 20000,
+    "count": 10
+    },
+    {"barcode": "299010028770",
+    "name": "Tarvuz",
+    "price": 25000,
+    "count": 10
+    },
+    {"barcode": "299010028771",
+    "name": "qovun",
+    "price": 30000,
+    "count": 10
+    },
+    {"barcode": "299010028772",
+    "name": "gilos",
+    "price": 35000,
+     "count": 10
+    }
+
+]
