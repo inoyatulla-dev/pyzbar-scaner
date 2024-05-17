@@ -4,8 +4,7 @@ from playsound import playsound
 import threading
 import json
 
-
-def draw_l_shape_corners(frame, pt1, pt2, line_length=30, color=(0, 255, 0), thickness=3):
+def draw_l_shape_corners(frame, pt1, pt2, line_length=40, color=(255, 144, 30), thickness=2):
     cv2.line(frame, pt1, (pt1[0] + line_length, pt1[1]), color, thickness)
     cv2.line(frame, pt1, (pt1[0], pt1[1] + line_length), color, thickness)
 
@@ -21,19 +20,18 @@ def draw_l_shape_corners(frame, pt1, pt2, line_length=30, color=(0, 255, 0), thi
     cv2.line(frame, (pt2[0] - line_length, pt2[1]), pt2, color, thickness)
     cv2.line(frame, (pt2[0], pt2[1] - line_length), (pt2[0], pt2[1]), color, thickness)
 
-
 def play_sound(sound_path):
     playsound(sound_path)
-
 
 def read_barcode_from_camera():
     ip_camera_url = "rtsp://192.168.1.161:8080/h264.sdp"
     cap = cv2.VideoCapture(ip_camera_url)
     data = ""
     data_list = []
+    product_info = ""
     sound_path = "sound/signal.wav"  # Sound file path
     cv2.namedWindow("Shtrix Kod O'qish", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Shtrix Kod O'qish", 400, 400)
+    cv2.resizeWindow("Shtrix Kod O'qish", 640, 480)
 
     # Load product data from JSON
     with open('Data/data.json') as f:
@@ -47,22 +45,23 @@ def read_barcode_from_camera():
 
         barcodes = decode(frame)
         if barcodes:
-            for barcode in barcodes:
-                barcode_data = barcode.data.decode('utf-8')
-                if barcode_data != data:
-                    data = barcode_data
-                    data_list.append(data)
-                    print("Barcode data:", data)
-                    threading.Thread(target=play_sound, args=(sound_path,)).start()
+         for barcode in barcodes:
+            barcode_data = barcode.data.decode('utf-8')
+            if barcode_data != data:
+                data = barcode_data
+                data_list.append(data)
+                print("Barcode data:", data)
+                threading.Thread(target=play_sound, args=(sound_path,)).start()
 
-                    # Search for the product in the data.json file
-                    product = next((item for item in product_data if item["barcode"] == data), None)
-                    if product:
-                        product_info = f"Name: {product['name']}, Price: {product['price']}, Count: {product['count']}"
-                        print(product_info)  # Display product information
-                    else:
-                        print("Product not found.")
+                # Search for the product in the data.json file
+                product = next((item for item in product_data if item["barcode"] == data), None)
+                if product:
+                    product_info = f"Name: {product['name']}, Price: {product['price']}, Count: {product['count']}"
+                    print(product_info)  # Display product information
+                else:
+                    product_info = "Product not found."
 
+        cv2.putText(frame, product_info, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 144, 30), 2, cv2.LINE_AA)
         # Draw frame with L-shape corners
         height, width, _ = frame.shape
         pt1 = (100, 100)
@@ -74,6 +73,8 @@ def read_barcode_from_camera():
 
         cv2.imshow("Shtrix Kod O'qish", frame)
 
+
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print(len(data_list))
             for i in data_list:
@@ -82,6 +83,5 @@ def read_barcode_from_camera():
 
     cap.release()
     cv2.destroyAllWindows()
-
 
 read_barcode_from_camera()

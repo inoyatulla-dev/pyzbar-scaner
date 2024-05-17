@@ -24,6 +24,12 @@
     "name": "gilos",
     "price": 35000,
      "count": 10
+    },
+    {"barcode": "9789943702059",
+    "name": "Kitob",
+    "price": 40000,
+    "count": 10
     }
+
 
 ]
